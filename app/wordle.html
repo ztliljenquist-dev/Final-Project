@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Wordle</title>
+
+<style>
+body {
+  background:#121213;
+  color:white;
+  font-family:Arial, sans-serif;
+  text-align:center;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(5, 60px);
+  gap:10px;
+  justify-content:center;
+  margin:20px auto;
+}
+
+.cell {
+  width:60px;
+  height:60px;
+  border:2px solid #3a3a3c;
+  font-size:32px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-transform:uppercase;
+}
+
+/* Colors */
+.correct { background:#538d4e; border-color:#538d4e; }
+.present { background:#b59f3b; border-color:#b59f3b; }
+.absent  { background:#3a3a3c; border-color:#3a3a3c; }
+
+/* Flip animation */
+.flip {
+  animation: flip 0.6s ease forwards;
+}
+
+@keyframes flip {
+  0%   { transform: rotateX(0); }
+  50%  { transform: rotateX(90deg); }
+  100% { transform: rotateX(0); }
+}
+
+/* Shake animation */
+.shake {
+  animation: shake 0.4s;
+}
+
+@keyframes shake {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-5px); }
+  100% { transform: translateX(0); }
+}
+
+input {
+  background:#121213;
+  color:white;
+  border:1px solid #555;
+  padding:10px;
+  font-size:16px;
+  margin-top:10px;
+}
+
+button {
+  padding:10px 20px;
+  margin-left:5px;
+  font-size:16px;
+}
+</style>
+</head>
+
+<body>
+
+<h1>Wordle</h1>
+
+<div class="grid" id="grid"></div>
+
+<input id="guess" maxlength="5" autofocus>
+<button onclick="submitGuess()">Guess</button>
+
+<script>
+const word = "TRAIN";
+let row = 0;
+const grid = document.getElementById("grid");
+const input = document.getElementById("guess");
+
+// Create grid
+for (let i = 0; i < 30; i++) {
+  const d = document.createElement("div");
+  d.className = "cell";
+  grid.appendChild(d);
+}
+
+// ENTER key support
+input.addEventListener("keydown", function(e) {
+  if (e.key === "Enter") {
+    submitGuess();
+  }
+});
+
+function submitGuess() {
+  let guess = input.value.toUpperCase();
+
+  if (guess.length !== 5 || row >= 6) {
+    shakeRow();
+    return;
+  }
+
+  for (let i = 0; i < 5; i++) {
+    const cell = grid.children[row * 5 + i];
+    cell.textContent = guess[i];
+
+    setTimeout(() => {
+      cell.classList.add("flip");
+
+      if (guess[i] === word[i]) {
+        cell.classList.add("correct");
+      } else if (word.includes(guess[i])) {
+        cell.classList.add("present");
+      } else {
+        cell.classList.add("absent");
+      }
+    }, i * 150);
+  }
+
+  row++;
+  input.value = "";
+}
+
+function shakeRow() {
+  for (let i = 0; i < 5; i++) {
+    const cell = grid.children[row * 5 + i];
+    cell.classList.add("shake");
+    setTimeout(() => cell.classList.remove("shake"), 400);
+  }
+}
+</script>
+
+</body>
+</html>
