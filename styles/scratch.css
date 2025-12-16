@@ -7,6 +7,9 @@ body {
 nav {
   background-color: #222;
   padding: 10px;
+
+  position: sticky;
+  top: 0;
 }
 
 nav a {
@@ -20,7 +23,12 @@ nav a {
   padding: 20px;
   margin: 20px;
   border-radius: 6px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
+
 
 img {
   width: 100%;
